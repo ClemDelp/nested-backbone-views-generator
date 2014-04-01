@@ -161,7 +161,7 @@ app.parseJsonArchyToHtml = function(tree, templates, javascript){
 app.parseJsonViewToHtml = function(appName,branch,templates){
 
     this.html = appName+".Views."+branch.name+" = Backbone.View.extend({\n"
-    this.html+= "    el:'',\n"
+    //this.html+= "    el:'',\n"
     this.html+= "    tagName:'',\n"
     this.html+= "    className:'',\n" 
     // Initialize  
