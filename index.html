@@ -1,83 +1,117 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html class="no-js" lang="en">
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <title>Nested-backbone-views-generator by ClemDelp</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nested Backbone views generator</title>
+    <link rel="stylesheet" href="assets/css/foundation.css" />
+    <link rel="stylesheet" href="assets/css/custom.css"/>
+    <script src="assets/js/modernizr.js"></script>
+    <!-- Prettify -->
+    <link rel="stylesheet" type="text/css" href="assets/css/prettify.css" />
+    <script type="text/javascript" src="assets/js/libs/prettify.js"></script>
+    <!-- Code mirror -->
+    <link rel="stylesheet" href="assets/css/codemirror.css">
+    <link rel="stylesheet" href="assets/css/show-hint.css">
+    <script src="assets/js/libs/codemirror.js"></script>
+    <script src="assets/js/libs/show-hint.js"></script>
+    <script src="assets/js/libs/javascript-hint.js"></script>
+    <script src="assets/js/libs/javascript.js"></script>
   </head>
-
   <body>
-    <header>
-      <div class="inner">
-        <h1>Nested-backbone-views-generator</h1>
-        <h2>Simply describe your nested web architecture in JSON and this script will generate the Backbone code associate (views + templates)</h2>
-        <a href="https://github.com/ClemDelp/nested-backbone-views-generator" class="button"><small>View project on</small>GitHub</a>
-      </div>
-    </header>
+<a href="https://github.com/ClemDelp/nested-backbone-views-generator"><img style="position: absolute; top: 0; right: 0; border: 0;z-index:999999" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+<!-- Title -->
+<nav class="top-bar row" data-topbar>
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="#">Nested Backbone views generator</a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
+  </ul>
+</nav>
+<!-- sub title -->
+<div class="row panel">
+  <center>
+    <b>Simply describe your nested web architecture in JSON and this script will generate the Backbone code corresponding (views + templates)</b><br><br>
+    <a href="https://github.com/ClemDelp/nested-backbone-views-generator" class="button tiny round">Documentation</a>
+    <a href="https://github.com/ClemDelp/nested-backbone-views-generator" class="button tiny round">Examples</a>
+  </center>
+</div>
+<!-- Main container -->
+<div class="row" id="main"></div>
+<div class="row panel"><center>CreaKtive approach</center></div>
+<!-- Backbone templates -->
+<script type="text/template" id="app-input-template">
+  <div class="panel">
+    <h4>Paste or write JSON directly here:</h4>
+    <div class="err"></div><br/>
+    <form id="json">
+      <textarea id="code" name="code" class="boxsizingBorder">
+      {
+        "application" : "timelineapp",
+        "branches" : [
+            {"name":"timeline","childs":[
+                {"name":"post", "relation" : "1-*", "type" : "view"}
+            ]},
+            {"name":"post", "childs":[
+                {"name":"postDetail","relation":"1-1","type":"template"},
+                {"name":"commentsPart","relation":"1-1","type":"view"}
+            ]},
+            {"name":"commentsPart","childs":[
+                {"name":"commentsList","relation":"1-1","type":"view"},
+                {"name":"newCommentInput","relation":"1-1","type":"template"}
+            ]},
+            {"name":"commentsList","childs":[
+                {"name":"commentDetail","relation":"1-*","type":"template"}
+            ]}
+        ]
+      }
+      </textarea>
+    </form>
+    <br/>
+    <a href="" class="button tiny generate expand round">Generate!</a>
+  </div>
+</script>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+<script type="text/template" id="app-templatesOutput-template">
+  <h4>Html generated</h4>
+<pre class="prettyprint linenums">
+<% _.each(templates, function(template) { %>
+<%- template.html %>
+<% }); %>
+</pre>
+</script>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/ClemDelp/nested-backbone-views-generator/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/ClemDelp/nested-backbone-views-generator/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/ClemDelp/nested-backbone-views-generator"></a> is maintained by <a href="https://github.com/ClemDelp">ClemDelp</a>.</p>
-
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
-    </div>
-
+<script type="text/template" id="app-viewsOutput-template">
+  <h4>Javascript generated</h4>
+<pre class="prettyprint linenums">
+<% _.each(javascript, function(script) { %>
+<%- script %>
+<% }); %>
+</pre>
+</script>
+    
   
+    <!-- Libraries  -->
+    <script type="text/javascript" src="assets/js/libs/jquery.min.js"></script>
+    <script type="text/javascript" src="assets/js/foundation.min.js"></script>
+    <script type="text/javascript" src="assets/js/libs/underscore-min.js"></script>
+    <script type="text/javascript" src="assets/js/libs/backbone-min.js"></script>
+    <!-- Libraries json editor -->
+    <script src="assets/js/libs/json2.js"></script>
+
+    
+
+    <!-- Base de l'application Backbone JS -->
+    <script type="text/javascript" src="src/app.js"></script>
+
+    <script>      
+      $(document).ready(function () {
+        app.init();
+        prettyPrint();
+        $(document).foundation();
+      }) ;
+    </script>
+
   </body>
 </html>
