@@ -1,0 +1,128 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nested Backbone views generator</title>
+    <link rel="stylesheet" href="assets/css/foundation.css" />
+    <link rel="stylesheet" href="assets/css/custom.css"/>
+    <script src="assets/js/modernizr.js"></script>
+    <!-- Prettify -->
+    <link rel="stylesheet" type="text/css" href="assets/css/prettify.css" />
+    <script type="text/javascript" src="assets/js/libs/prettify.js"></script>
+    <!-- Code mirror -->
+    <link rel="stylesheet" href="assets/css/codemirror.css">
+    <link rel="stylesheet" href="assets/css/show-hint.css">
+    <script src="assets/js/libs/codemirror.js"></script>
+    <script src="assets/js/libs/show-hint.js"></script>
+    <script src="assets/js/libs/javascript-hint.js"></script>
+    <script src="assets/js/libs/javascript.js"></script>
+  </head>
+  <body>
+<a href="https://github.com/ClemDelp/nested-backbone-views-generator"><img style="position: absolute; top: 0; right: 0; border: 0;z-index:999999" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+<!-- Title -->
+<nav class="top-bar row" data-topbar>
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="#">Nested Backbone views generator</a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
+  </ul>
+</nav>
+<!-- sub title -->
+<div class="row panel">
+  <center>
+    <b>Simply describe your nested web architecture in JSON and this script will generate the Backbone code corresponding (views + templates)</b><br><br>
+    <a href="https://github.com/ClemDelp/nested-backbone-views-generator" class="button tiny round">Documentation</a>
+    <a href="https://github.com/ClemDelp/nested-backbone-views-generator" class="button tiny round">Examples</a>
+  </center>
+</div>
+<!-- Main container -->
+<div class="row" id="main"></div>
+<div class="row panel"><center>CreaKtive approach</center></div>
+<!-- Backbone templates -->
+<script type="text/template" id="app-input-template">
+  <div class="panel">
+    <h4>Paste or write JSON directly here:</h4>
+    <div class="err"></div><br/>
+    <form id="json">
+      <textarea id="code" name="code" class="boxsizingBorder">
+      {
+        "application" : "timelineapp",
+        "branches" : [
+            {"name":"timeline","childs":[
+                {"name":"post", "relation" : "1-*", "type" : "view"}
+            ]},
+            {"name":"post", "childs":[
+                {"name":"postDetail","relation":"1-1","type":"template"},
+                {"name":"commentsPart","relation":"1-1","type":"view"}
+            ]},
+            {"name":"commentsPart","childs":[
+                {"name":"commentsList","relation":"1-1","type":"view"},
+                {"name":"newCommentInput","relation":"1-1","type":"template"}
+            ]},
+            {"name":"commentsList","childs":[
+                {"name":"commentDetail","relation":"1-*","type":"template"}
+            ]}
+        ]
+      }
+      </textarea>
+    </form>
+    <br/>
+    <a href="" class="button tiny generate expand round">Generate!</a>
+  </div>
+</script>
+
+<script type="text/template" id="app-templatesOutput-template">
+  <h4>Html generated</h4>
+<pre class="prettyprint linenums">
+<% _.each(templates, function(template) { %>
+<%- template.html %>
+<% }); %>
+</pre>
+</script>
+
+<script type="text/template" id="app-viewsOutput-template">
+  <h4>Javascript generated</h4>
+<pre class="prettyprint linenums">
+<% _.each(javascript, function(script) { %>
+<%- script %>
+<% }); %>
+</pre>
+</script>
+    
+  
+    <!-- Libraries  -->
+    <script type="text/javascript" src="assets/js/libs/jquery.min.js"></script>
+    <script type="text/javascript" src="assets/js/foundation.min.js"></script>
+    <script type="text/javascript" src="assets/js/libs/underscore-min.js"></script>
+    <script type="text/javascript" src="assets/js/libs/backbone-min.js"></script>
+    <!-- Libraries json editor -->
+    <script src="assets/js/libs/json2.js"></script>
+
+    
+
+    <!-- Base de l'application Backbone JS -->
+    <script type="text/javascript" src="src/app.js"></script>
+
+    <script>      
+      $(document).ready(function () {
+        app.init();
+        prettyPrint();
+        $(document).foundation();
+      }) ;
+    </script>
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-49608521-1', 'clemdelp.github.io');
+      ga('send', 'pageview');
+
+    </script>
+
+  </body>
+</html>
