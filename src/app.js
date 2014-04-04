@@ -161,9 +161,6 @@ app.parseJsonArchyToHtml = function(tree, templates, javascript){
 app.parseJsonViewToHtml = function(appName,branch,templates){
 
     this.html = appName+".Views."+branch.name+" = Backbone.View.extend({\n"
-    //this.html+= "    el:'',\n"
-    this.html+= "    tagName:'',\n"
-    this.html+= "    className:'',\n" 
     // Initialize  
     this.html+= "    initialize : function(json) {\n"
     this.html+= "        _.bindAll(this, 'render');\n"
@@ -175,25 +172,35 @@ app.parseJsonViewToHtml = function(appName,branch,templates){
     this.html+= "       $(this.el).html('');\n"
     this.html+= "       _this = this;\n"
 
+    _this = this;
     branch.childs.forEach(function(child){
+        console.log("child",child)
         if(child.relation == "1-1"){
             if(child.type == "view"){
-                this.html+= "        $(_this.el).append(new "+appName+".Views."+child.name+"({collection : this.collection}).render().el);\n"
+                _this.html+= "        $(_this.el).append(new "+appName+".Views."+child.name+"({\n"
+                _this.html+= "          tagName : '',\n"
+                _this.html+= "          className : '',\n"
+                _this.html+= "          collection : this.collection\n"
+                _this.html+=  "       }).render().el);\n"
             }else if(child.type == "template"){
                 templates.unshift(new getHtmlTemplate(appName,child.name,child.relation));
-                this.html+= "        template_"+child.name+" = _.template($('#"+appName+"_"+child.name+"_template').html());\n"
-                this.html+= "        $(_this.el).append(template_"+child.name+"({collection:this.collection.toJSON()}));\n"
+                _this.html+= "        template_"+child.name+" = _.template($('#"+appName+"_"+child.name+"_template').html());\n"
+                _this.html+= "        $(_this.el).append(template_"+child.name+"({collection:this.collection.toJSON()}));\n"
             }
         }else if(child.relation == "1-*"){
-            this.html+= "        this.collection.each(function(model_){\n"
+            _this.html+= "        this.collection.each(function(model_){\n"
             if(child.type == "view"){
-                this.html+= "            $(_this.el).append(new "+appName+".Views."+child.name+"({model: model_}).render().el);\n"
+                _this.html+= "            $(_this.el).append(new "+appName+".Views."+child.name+"({\n"
+                _this.hmlt+= "              tagName: '',\n"
+                _this.hmlt+= "              className: '',\n"
+                _this.hmlt+= "              model: model_,\n"
+                _this.hmlt+= "            }).render().el);\n"
             }else if(child.type == "template"){
                 templates.unshift(new getHtmlTemplate(appName,child.name,child.relation));
-                this.html+= "            template_"+child.name+" = _.template($('#"+appName+"_"+child.name+"_template').html());\n"
-                this.html+="             $(_this.el).append(template_"+child.name+"({model:model_.toJSON()}));\n"
+                _this.html+= "            template_"+child.name+" = _.template($('#"+appName+"_"+child.name+"_template').html());\n"
+                _this.html+="             $(_this.el).append(template_"+child.name+"({model:model_.toJSON()}));\n"
             }
-            this.html+= "        });\n"
+            _this.html+= "        });\n"
         }
     });
     this.html+= "        return this;\n"
@@ -206,7 +213,7 @@ app.parseJsonViewToHtml = function(appName,branch,templates){
 // TODO: 
 function getHtmlTemplate(appName,templateName,relation){
     this.html = "<script type='text/template' id='"+appName+"_"+templateName+"_template'>\n";
-    if(relation = "1-1"){
+    if(relation == "1-1"){
         this.html += "  <% model %>\n";
     }else if(relation == "1-*"){
         this.html += "  <% _.each(collection, function(model, i) { %>\n"
