@@ -148,80 +148,13 @@ app.Views.Main = Backbone.View.extend({
 //-----------------------------------//
 // TODO:
 app.parseJsonArchyToHtml = function(tree, templates, javascript){
-    appName = tree.application;
+    appName = tree.name;
     // App javascript
-    javascript.unshift(app.parseJsonApplicationToHtml(appName,tree.branches[0].name));
-    // For each branches
-    tree.branches.forEach(function(branch){
-        javascript.unshift(app.parseJsonViewToHtml(appName,branch,templates))
+    javascript.unshift(app.parseJsonApplicationToHtml(appName,tree.children[0].name));
+    // For each children
+    tree.children.forEach(function(child){
+        javascript.unshift(app.parseJsonViewToHtml(appName,child,templates))
     });
-}
-//-----------------------------------//
-// TODO:
-app.parseJsonViewToHtml = function(appName,branch,templates){
-
-    this.html = appName+".Views."+branch.name+" = Backbone.View.extend({\n"
-    // Initialize  
-    this.html+= "    initialize : function(json) {\n"
-    this.html+= "        _.bindAll(this, 'render');\n"
-    this.html+= "    },\n";
-    // Events
-    this.html+= "    events : {},\n"
-    // Render
-    this.html+= "    render : function(){\n"
-    this.html+= "       $(this.el).html('');\n"
-    this.html+= "       _this = this;\n"
-    _this = this;
-    branch.childs.forEach(function(child){
-        console.log("child",child)
-        if(child.relation == "1-1"){
-            if(child.type == "view"){
-                _this.html+= "        $(_this.el).append(new "+appName+".Views."+child.name+"({\n"
-                _this.html+= "          tagName : '',\n"
-                _this.html+= "          className : '',\n"
-                _this.html+= "          collection : this.collection\n"
-                _this.html+=  "       }).render().el);\n"
-            }else if(child.type == "template"){
-                templates.unshift(new getHtmlTemplate(appName,child.name,child.relation));
-                _this.html+= "        template_"+child.name+" = _.template($('#"+appName+"_"+child.name+"_template').html());\n"
-                _this.html+= "        $(_this.el).append(template_"+child.name+"({collection:this.collection.toJSON()}));\n"
-            }
-        }else if(child.relation == "1-*"){
-            _this.html+= "        this.collection.each(function(model_){\n"
-            if(child.type == "view"){
-                _this.html+= "            $(_this.el).append(new "+appName+".Views."+child.name+"({\n"
-                _this.hmlt+= "              tagName: '',\n"
-                _this.hmlt+= "              className: '',\n"
-                _this.hmlt+= "              model: model_,\n"
-                _this.hmlt+= "            }).render().el);\n"
-            }else if(child.type == "template"){
-                templates.unshift(new getHtmlTemplate(appName,child.name,child.relation));
-                _this.html+= "            template_"+child.name+" = _.template($('#"+appName+"_"+child.name+"_template').html());\n"
-                _this.html+="             $(_this.el).append(template_"+child.name+"({model:model_.toJSON()}));\n"
-            }
-            _this.html+= "        });\n"
-        }
-    });
-    this.html+= "        return this;\n"
-    this.html+= "    }\n"
-    // END
-    this.html+= "});\n"
-    return this.html;
-}
-//-----------------------------------//
-// TODO: 
-function getHtmlTemplate(appName,templateName,relation){
-    this.html = "<script type='text/template' id='"+appName+"_"+templateName+"_template'>\n";
-    if(relation == "1-1"){
-        this.html += "  <% model %>\n";
-    }else if(relation == "1-*"){
-        this.html += "  <% _.each(collection, function(model, i) { %>\n"
-        this.html += "      <% model %>-<% i %>\n"
-        this.html += "  <% }); %>\n"
-    }
-    this.html += "</script>\n"
-    return this.html;
-  
 }
 //-----------------------------------//
 // TODO: 
@@ -241,5 +174,72 @@ app.parseJsonApplicationToHtml = function(appName,firstViewName){
     this.html+= "    }\n"
     this.html+= "};\n";
     return this.html;
+}
+//-----------------------------------//
+// TODO:
+app.parseJsonViewToHtml = function(appName,children,templates){
+
+    this.html = appName+".Views."+children.name+" = Backbone.View.extend({\n"
+    // Initialize  
+    this.html+= "    initialize : function(json) {\n"
+    this.html+= "        _.bindAll(this, 'render');\n"
+    this.html+= "    },\n";
+    // Events
+    this.html+= "    events : {},\n"
+    // Render
+    this.html+= "    render : function(){\n"
+    this.html+= "       $(this.el).html('');\n"
+    this.html+= "       _this = this;\n"
+    _this = this;
+    children.children.forEach(function(child){
+        console.log("child",child)
+        if(child.link == "1-1"){
+            if(child.type == "view"){
+                _this.html+= "        $(_this.el).append(new "+appName+".Views."+child.name+"({\n"
+                _this.html+= "          tagName : '',\n"
+                _this.html+= "          className : '',\n"
+                _this.html+= "          collection : this.collection\n"
+                _this.html+=  "       }).render().el);\n"
+            }else if(child.type == "template"){
+                templates.unshift(new getHtmlTemplate(appName,child.name,child.link));
+                _this.html+= "        template_"+child.name+" = _.template($('#"+appName+"_"+child.name+"_template').html());\n"
+                _this.html+= "        $(_this.el).append(template_"+child.name+"({collection:this.collection.toJSON()}));\n"
+            }
+        }else if(child.link == "1-*"){
+            _this.html+= "        this.collection.each(function(model_){\n"
+            if(child.type == "view"){
+                _this.html+= "            $(_this.el).append(new "+appName+".Views."+child.name+"({\n"
+                _this.hmlt+= "              tagName: '',\n"
+                _this.hmlt+= "              className: '',\n"
+                _this.hmlt+= "              model: model_,\n"
+                _this.hmlt+= "            }).render().el);\n"
+            }else if(child.type == "template"){
+                templates.unshift(new getHtmlTemplate(appName,child.name,child.link));
+                _this.html+= "            template_"+child.name+" = _.template($('#"+appName+"_"+child.name+"_template').html());\n"
+                _this.html+="             $(_this.el).append(template_"+child.name+"({model:model_.toJSON()}));\n"
+            }
+            _this.html+= "        });\n"
+        }
+    });
+    this.html+= "        return this;\n"
+    this.html+= "    }\n"
+    // END
+    this.html+= "});\n"
+    return this.html;
+}
+//-----------------------------------//
+// TODO: 
+function getHtmlTemplate(appName,templateName,link){
+    this.html = "<script type='text/template' id='"+appName+"_"+templateName+"_template'>\n";
+    if(link == "1-1"){
+        this.html += "  <% model %>\n";
+    }else if(link == "1-*"){
+        this.html += "  <% _.each(collection, function(model, i) { %>\n"
+        this.html += "      <% model %>-<% i %>\n"
+        this.html += "  <% }); %>\n"
+    }
+    this.html += "</script>\n"
+    return this.html;
+  
 }
 //-----------------------------------//

@@ -17,7 +17,7 @@
     <script src="assets/js/libs/show-hint.js"></script>
     <script src="assets/js/libs/javascript-hint.js"></script>
     <script src="assets/js/libs/javascript.js"></script>
-    
+
   </head>
   <body>
 <a href="https://github.com/ClemDelp/nested-backbone-views-generator"><img style="position: absolute; top: 0; right: 0; border: 0;z-index:999999" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
@@ -49,21 +49,21 @@
     <form id="json">
       <textarea id="code" name="code" class="boxsizingBorder">
       {
-        "application" : "timelineapp",
-        "branches" : [
-            {"name":"timeline","childs":[
-                {"name":"post", "relation" : "1-*", "type" : "view"}
+        "name" : "timelineapp",
+        "children" : [
+            {"name":"timeline","children":[
+                {"name":"post", "link" : "1-*", "type" : "view"}
             ]},
-            {"name":"post", "childs":[
-                {"name":"postDetail","relation":"1-1","type":"template"},
-                {"name":"commentsPart","relation":"1-1","type":"view"}
+            {"name":"post", "children":[
+                {"name":"postDetail","link":"1-1","type":"template"},
+                {"name":"commentsPart","link":"1-1","type":"view"}
             ]},
-            {"name":"commentsPart","childs":[
-                {"name":"commentsList","relation":"1-1","type":"view"},
-                {"name":"newCommentInput","relation":"1-1","type":"template"}
+            {"name":"commentsPart","children":[
+                {"name":"commentsList","link":"1-1","type":"view"},
+                {"name":"newCommentInput","link":"1-1","type":"template"}
             ]},
-            {"name":"commentsList","childs":[
-                {"name":"commentDetail","relation":"1-*","type":"template"}
+            {"name":"commentsList","children":[
+                {"name":"commentDetail","link":"1-*","type":"template"}
             ]}
         ]
       }
