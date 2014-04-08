@@ -49,21 +49,21 @@
     <form id="json">
       <textarea id="code" name="code" class="boxsizingBorder">
       {
-        "name" : "timelineapp",
+        "name" : "Facebook_timeline",
         "children" : [
             {"name":"timeline","children":[
                 {"name":"post", "link" : "1-*", "type" : "view"}
             ]},
             {"name":"post", "children":[
-                {"name":"postDetail","link":"1-1","type":"template"},
-                {"name":"commentsPart","link":"1-1","type":"view"}
+                {"name":"content","link":"1-1","type":"view"},
+                {"name":"comments","link":"1-1","type":"view"}
             ]},
-            {"name":"commentsPart","children":[
-                {"name":"commentsList","link":"1-1","type":"view"},
-                {"name":"newCommentInput","link":"1-1","type":"template"}
+            {"name":"content","children":[
+                {"name":"content_template","link":"1-1","type":"template"}
             ]},
-            {"name":"commentsList","children":[
-                {"name":"commentDetail","link":"1-*","type":"template"}
+            {"name":"comments","children":[ 
+                {"name":"commentsList","link":"1-*","type":"template"}, 
+                {"name":"newCommentInput","link":"1-1","type":"template"} 
             ]}
         ]
       }
@@ -78,7 +78,7 @@
   <h4>Html generated</h4>
 <pre class="prettyprint linenums">
 <% _.each(templates, function(template) { %>
-<%- template.html %>
+<%- template %>
 <% }); %>
 </pre>
 </script>

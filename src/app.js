@@ -150,15 +150,17 @@ app.Views.Main = Backbone.View.extend({
 app.parseJsonArchyToHtml = function(tree, templates, javascript){
     appName = tree.name;
     // App javascript
-    javascript.unshift(app.parseJsonApplicationToHtml(appName,tree.children[0].name));
+    javascript.unshift(app.parseJsonApplicationToHtml(appName,tree.children[0].name,templates));
     // For each children
     tree.children.forEach(function(child){
         javascript.unshift(app.parseJsonViewToHtml(appName,child,templates))
     });
+
+    console.log(templates)
 }
 //-----------------------------------//
 // TODO: 
-app.parseJsonApplicationToHtml = function(appName,firstViewName){
+app.parseJsonApplicationToHtml = function(appName,firstViewName,templates){
     this.html = "var "+appName+" = {\n"
     this.html+= "    Collections: {},\n"
     this.html+= "    Models: {},\n"
@@ -167,12 +169,18 @@ app.parseJsonApplicationToHtml = function(appName,firstViewName){
     this.html+= "    views: {},\n"
     this.html+= "    init: function () {\n";
     this.html+= "        this.views."+firstViewName+" = new this.Views."+firstViewName+"({\n";
+    this.html+= "            el : '#"+firstViewName+"_container',\n";
+    this.html+= "            tagName : '',\n";
+    this.html+= "            className : '',\n";
     this.html+= "            model : this.model,\n";
     this.html+= "            collection : this.collection,\n"
     this.html+= "        });\n"
     this.html+= "        this.views."+firstViewName+".render();\n"
     this.html+= "    }\n"
     this.html+= "};\n";
+    // el container
+    templates.unshift('<script>\n   $(document).ready(function(){\n         '+appName+'.init();\n   });\n</script>');
+    templates.unshift('<div id="'+firstViewName+'_container"></div>');
     return this.html;
 }
 //-----------------------------------//
@@ -189,38 +197,40 @@ app.parseJsonViewToHtml = function(appName,children,templates){
     // Render
     this.html+= "    render : function(){\n"
     this.html+= "       $(this.el).html('');\n"
-    this.html+= "       _this = this;\n"
     _this = this;
-    children.children.forEach(function(child){
-        console.log("child",child)
-        if(child.link == "1-1"){
-            if(child.type == "view"){
-                _this.html+= "        $(_this.el).append(new "+appName+".Views."+child.name+"({\n"
-                _this.html+= "          tagName : '',\n"
-                _this.html+= "          className : '',\n"
-                _this.html+= "          collection : this.collection\n"
-                _this.html+=  "       }).render().el);\n"
-            }else if(child.type == "template"){
-                templates.unshift(new getHtmlTemplate(appName,child.name,child.link));
-                _this.html+= "        template_"+child.name+" = _.template($('#"+appName+"_"+child.name+"_template').html());\n"
-                _this.html+= "        $(_this.el).append(template_"+child.name+"({collection:this.collection.toJSON()}));\n"
+    if(children.children){
+        this.html+= "       _this = this;\n"
+        children.children.forEach(function(child){
+            console.log("child",child)
+            if(child.link == "1-1"){
+                if(child.type == "view"){
+                    _this.html+= "        $(_this.el).append(new "+appName+".Views."+child.name+"({\n"
+                    _this.html+= "          tagName : '',\n"
+                    _this.html+= "          className : '',\n"
+                    _this.html+= "          collection : this.collection\n"
+                    _this.html+=  "       }).render().el);\n"
+                }else if(child.type == "template"){
+                    templates.unshift(getHtmlTemplate(appName,child.name,child.link));
+                    _this.html+= "        template_"+child.name+" = _.template($('#"+appName+"_"+child.name+"_template').html());\n"
+                    _this.html+= "        $(_this.el).append(template_"+child.name+"({collection:this.collection.toJSON()}));\n"
+                }
+            }else if(child.link == "1-*"){
+                _this.html+= "        this.collection.each(function(model_){\n"
+                if(child.type == "view"){
+                    _this.html+= "            $(_this.el).append(new "+appName+".Views."+child.name+"({\n"
+                    _this.hmlt+= "              tagName: '',\n"
+                    _this.hmlt+= "              className: '',\n"
+                    _this.hmlt+= "              model: model_,\n"
+                    _this.hmlt+= "            }).render().el);\n"
+                }else if(child.type == "template"){
+                    templates.unshift(getHtmlTemplate(appName,child.name,child.link));
+                    _this.html+= "            template_"+child.name+" = _.template($('#"+appName+"_"+child.name+"_template').html());\n"
+                    _this.html+="             $(_this.el).append(template_"+child.name+"({model:model_.toJSON()}));\n"
+                }
+                _this.html+= "        });\n"
             }
-        }else if(child.link == "1-*"){
-            _this.html+= "        this.collection.each(function(model_){\n"
-            if(child.type == "view"){
-                _this.html+= "            $(_this.el).append(new "+appName+".Views."+child.name+"({\n"
-                _this.hmlt+= "              tagName: '',\n"
-                _this.hmlt+= "              className: '',\n"
-                _this.hmlt+= "              model: model_,\n"
-                _this.hmlt+= "            }).render().el);\n"
-            }else if(child.type == "template"){
-                templates.unshift(new getHtmlTemplate(appName,child.name,child.link));
-                _this.html+= "            template_"+child.name+" = _.template($('#"+appName+"_"+child.name+"_template').html());\n"
-                _this.html+="             $(_this.el).append(template_"+child.name+"({model:model_.toJSON()}));\n"
-            }
-            _this.html+= "        });\n"
-        }
-    });
+        });
+    }
     this.html+= "        return this;\n"
     this.html+= "    }\n"
     // END
