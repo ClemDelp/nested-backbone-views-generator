@@ -6,17 +6,19 @@ Simply describe your nested web architecture in JSON and this script will genera
 # Introduction
 The interface architecture of each web application can be represente as  a tree of views. You have the main view and its childs.
 
-Take an example:  the FaceBook Timeline is composed by somes posts. Each post are composed by a main part: the content (img, description, …) and a sub part: the activities (comments, likes, …):
+The interface architecture of each Web application can be represented as a tree of views. You have the main view and its children.
+
+An example: the Facebook’s Timeline is composed of some posts. Each post are composed by a main part: the content (img, description, …) and a subpart: the activities (comments, likes, …):
 
 ![alt text](https://github.com/ClemDelp/nested-backbone-views-generator/blob/master/assets/img/facebook_timeline.png?raw=true "facebook timeline architecture example")
 
-The representation of the Timeline interface FaceBook as a tree of views  would be:
+The Facebook's timeline tree of views would be:
 
 ![alt text](https://github.com/ClemDelp/nested-backbone-views-generator/blob/master/assets/img/architecture_tree_1.png?raw=true "facebook timeline architecture tree")
 
-Content and Activities are post’s nested views, and Post are the Timeline’s nested view, we have two nesting level.
+"Content" and "Activities" are the nested views of "Post" and "Post" are the nested view of "Timeline": we have two nesting level.
 
-With Backbone, views can manage templates to display a render. In our FaceBook Timeline example jute Content and Activities views manage templates to display their own HTML render:
+With Backbone, views can manage templates to display a render. In our case just the "Content" and the "Activities" views manage templates to display their own HTML render:
 
 ![alt text](https://github.com/ClemDelp/nested-backbone-views-generator/blob/master/assets/img/architecture_tree_backbone.png?raw=true "facebook timeline architecture tree")
 
@@ -73,7 +75,7 @@ var Facebook_timeline = {
 
 ## HTML Part
 
-You get all templates you views need + the html element container referenced into the namespace declaration + the call to the module constructor.
+You get all templates that your views need + the html element container referenced into the namespace declaration + the call to the module constructor.
 
 ```html
 <script type='text/template' id='Facebook_timeline_newCommentInput_template'>
